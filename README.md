@@ -42,4 +42,4 @@ This system helps LGUs quickly identify high-risk areas, track disaster impacts,
 ### Setup
 1. Clone the repository:
 ```bash
-git clone https://github.com/Jyrowen/disaster-database.git
+git clone https://github.com/Jyrowen/DisasterManagementDB-sdg11-dbms.git
