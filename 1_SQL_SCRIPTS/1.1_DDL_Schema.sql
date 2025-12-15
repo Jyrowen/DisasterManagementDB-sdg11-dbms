@@ -1,15 +1,21 @@
+-- This table stores the different types of hazards (ex. earthquake, flood, typhoon)
+-- Category is limited to the four main disaster classifications
 CREATE TABLE HAZARD_TYPE (
     Hazard_Type_ID INT PRIMARY KEY,
     Name VARCHAR(50) NOT NULL,
     Category VARCHAR(50) NOT NULL CHECK (Category IN ('Geological','Hydrometeorological','Climatological','Meteorological'))
 );
 
+-- This table represents regions in the country
+-- Poverty_Rate helps identify socio-economic vulnerability of each region
 CREATE TABLE REGION (
     Region_ID INT PRIMARY KEY,
     Region_Name VARCHAR(50) NOT NULL,
     Poverty_Rate DECIMAL(4,1) NOT NULL CHECK (Poverty_Rate >= 0 AND Poverty_Rate <= 100)
 );
 
+-- This table stores municipalities and links them to their region
+-- One region can have many municipalities
 CREATE TABLE MUNICIPALITY (
     Municipality_ID INT PRIMARY KEY,
     Region_ID INT NOT NULL,
@@ -17,6 +23,8 @@ CREATE TABLE MUNICIPALITY (
     FOREIGN KEY (Region_ID) REFERENCES REGION(Region_ID)
 );
 
+-- This table stores barangays under each municipality
+-- One municipality can have many barangays
 CREATE TABLE BARANGAY (
     Barangay_ID INT PRIMARY KEY,
     Municipality_ID INT NOT NULL,
@@ -24,6 +32,9 @@ CREATE TABLE BARANGAY (
     FOREIGN KEY (Municipality_ID) REFERENCES MUNICIPALITY(Municipality_ID)
 );
 
+-- This table records actual disaster events
+-- Links the hazard type and the affected barangay
+-- Severity_Scale shows how intense the disaster was (1 = lowest, 10 = highest)
 CREATE TABLE DISASTER_EVENT (
     Event_ID INT PRIMARY KEY,
     Hazard_Type_ID INT NOT NULL,
@@ -36,6 +47,8 @@ CREATE TABLE DISASTER_EVENT (
     FOREIGN KEY (Barangay_ID) REFERENCES BARANGAY(Barangay_ID),
 );
 
+-- This table groups people in a barangay by vulnerability (ex. elderly, children)
+-- Evacuation_Status tracks the current safety condition of the group
 CREATE TABLE POPULATION_SEGMENT (
     Segment_ID INT PRIMARY KEY,
     Barangay_ID INT NOT NULL,
@@ -46,6 +59,8 @@ CREATE TABLE POPULATION_SEGMENT (
     FOREIGN KEY (Barangay_ID) REFERENCES BARANGAY(Barangay_ID)
 );
 
+-- This table records human impact per disaster event and population segment
+-- Tracks deaths, injuries, and total affected people
 CREATE TABLE HUMAN_IMPACT (
     Human_Impact_ID INT PRIMARY KEY,
     Event_ID INT NOT NULL,
@@ -57,6 +72,8 @@ CREATE TABLE HUMAN_IMPACT (
     FOREIGN KEY (Segment_ID) REFERENCES POPULATION_SEGMENT(Segment_ID)
 );
 
+-- This table stores assets located in a barangay (ex. roads, schools, hospitals)
+-- Pre_Disaster_Value is used to estimate economic loss after a disaster
 CREATE TABLE ASSET (
     Asset_ID INT PRIMARY KEY,
     Barangay_ID INT NOT NULL,
@@ -66,6 +83,9 @@ CREATE TABLE ASSET (
     FOREIGN KEY (Barangay_ID) REFERENCES BARANGAY(Barangay_ID)
 );
 
+-- This table links disaster events to damaged assets
+-- Damage_Level describes how badly the asset was affected
+-- Estimated_Loss_Value shows the monetary impact of the damage
 CREATE TABLE IMPACTED_ASSET (
     Impact_Asset_ID INT PRIMARY KEY,
     Event_ID INT NOT NULL,
